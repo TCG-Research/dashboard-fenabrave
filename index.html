@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Fenabrave — Dashboard de Emplacamentos</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root {
     --bg: #f0f2f5;
@@ -162,117 +161,7 @@
 </head>
 <body>
 
-<!-- ===== SUPABASE LOGIN GATE ===== -->
-<!-- Substitua os dois valores abaixo pelos do SEU projeto Supabase -->
-<script>
-  const SUPABASE_URL  = "https://guzoripmdqclgxrllfvj.supabase.co";
-  const SUPABASE_ANON = "sb_publishable_rN8qCD-VFePFYx9yqtswGg_Rc1DWQgR";
-</script>
-
-<div id="gate" style="
-  position:fixed;inset:0;z-index:9999;
-  background:#111;
-  display:flex;align-items:center;justify-content:center;
-  font-family:'Segoe UI',Arial,sans-serif;
-">
-  <div style="
-    background:#1a1a1a;border-radius:16px;padding:48px 40px;
-    width:100%;max-width:380px;box-shadow:0 8px 40px rgba(0,0,0,.6);
-    border:1px solid #2a2a2a;text-align:center;
-  ">
-    <div style="font-size:2rem;margin-bottom:8px">&#128202;</div>
-    <h2 style="color:#fff;font-size:1.2rem;font-weight:700;margin-bottom:4px">Fenabrave</h2>
-    <p style="color:#888;font-size:.8rem;margin-bottom:32px">Dashboard de Emplacamentos</p>
-
-    <input id="email" type="text" placeholder="Usuario" autocomplete="username" autocapitalize="none" spellcheck="false"
-      style="
-        width:100%;padding:12px 16px;border-radius:8px;
-        border:1.5px solid #333;background:#111;color:#fff;
-        font-size:.95rem;outline:none;margin-bottom:10px;
-        transition:border .2s;
-      "
-      onfocus="this.style.borderColor='#FF5300'"
-      onblur="this.style.borderColor='#333'"
-    />
-    <input id="pwd" type="password" placeholder="Senha" autocomplete="current-password"
-      style="
-        width:100%;padding:12px 16px;border-radius:8px;
-        border:1.5px solid #333;background:#111;color:#fff;
-        font-size:.95rem;outline:none;margin-bottom:12px;
-        transition:border .2s;
-      "
-      onkeydown="if(event.key==='Enter')doLogin()"
-      onfocus="this.style.borderColor='#FF5300'"
-      onblur="this.style.borderColor='#333'"
-    />
-    <div id="gate-err" style="color:#e63946;font-size:.78rem;margin-bottom:10px;min-height:18px"></div>
-    <button id="gate-btn" onclick="doLogin()" style="
-      width:100%;padding:12px;border-radius:8px;border:none;
-      background:#FF5300;color:#fff;font-size:.95rem;font-weight:700;
-      cursor:pointer;transition:background .2s;
-    "
-    onmouseover="this.style.background='#e04a00'"
-    onmouseout="this.style.background='#FF5300'"
-    >Entrar</button>
-  </div>
-</div>
-
-<div id="app" style="display:none">
-
-<script>
-  // Cliente Supabase
-  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-
-  // Usuario "publico" que aparece na tela -> email real cadastrado no Supabase.
-  // Para alterar, mude o valor de LOGIN_TO_EMAIL.
-  const LOGIN_TO_EMAIL = {
-    "ibba": "admin@fenabrave.local"
-  };
-
-  async function doLogin(){
-    const user = document.getElementById('email').value.trim().toLowerCase();
-    const password = document.getElementById('pwd').value;
-    const errEl = document.getElementById('gate-err');
-    const btn = document.getElementById('gate-btn');
-    errEl.textContent = '';
-    if(!user || !password){
-      errEl.textContent = 'Preencha usuario e senha.';
-      return;
-    }
-    const realEmail = LOGIN_TO_EMAIL[user];
-    if(!realEmail){
-      errEl.textContent = 'Usuario ou senha incorretos.';
-      document.getElementById('pwd').value = '';
-      setTimeout(()=>errEl.textContent='', 3500);
-      return;
-    }
-    btn.disabled = true; btn.textContent = 'Entrando...';
-    const { data, error } = await sb.auth.signInWithPassword({ email: realEmail, password });
-    btn.disabled = false; btn.textContent = 'Entrar';
-    if(error){
-      errEl.textContent = 'Usuario ou senha incorretos.';
-      document.getElementById('pwd').value = '';
-      setTimeout(()=>errEl.textContent='', 3500);
-      return;
-    }
-    showApp();
-  }
-
-  async function doLogout(){
-    await sb.auth.signOut();
-    location.reload();
-  }
-
-  function showApp(){
-    document.getElementById('gate').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
-  }
-
-  // Se ja houver sessao valida, libera direto
-  sb.auth.getSession().then(({ data }) => {
-    if(data && data.session) showApp();
-  });
-</script>
+<div id="app">
 
 <header>
   <div>
@@ -281,12 +170,6 @@
   </div>
   <div style="display:flex;align-items:center;gap:10px">
     <div class="badge">13 meses de dados</div>
-    <button onclick="doLogout()" title="Sair" style="
-      background:rgba(255,255,255,.10);color:#fff;border:1px solid rgba(255,255,255,.18);
-      font-size:.75rem;padding:5px 12px;border-radius:20px;cursor:pointer;
-    " onmouseover="this.style.background='rgba(255,255,255,.18)'"
-       onmouseout="this.style.background='rgba(255,255,255,.10)'"
-    >Sair</button>
   </div>
 </header>
 
